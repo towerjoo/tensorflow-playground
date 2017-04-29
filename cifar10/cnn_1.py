@@ -1,6 +1,9 @@
 import tensorflow as tf
 import numpy as np
-from tensorflow.contrib import keras
+try:
+    from tensorflow.contrib import keras
+except:
+    import keras
 
 class SimpleModel:
     def one_hot(self, data, num=10):
