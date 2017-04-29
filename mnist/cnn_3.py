@@ -26,7 +26,7 @@ class SimpleModel:
     def get_model(self, X, conv1, conv2, conv3, fc1, fc2, p_keep_conv, p_keep_hidden):
         def apply_conv(input, conv):
             conv1 = conv
-            layer1a = tf.nn.relu(tf.nn.conv2d(X, conv1, strides=[1, 1, 1, 1], padding='SAME'))
+            layer1a = tf.nn.relu(tf.nn.conv2d(input, conv1, strides=[1, 1, 1, 1], padding='SAME'))
             layer1 = tf.nn.max_pool(layer1a, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1],
                                    padding='SAME')
             layer1 = tf.nn.dropout(layer1, p_keep_conv)
