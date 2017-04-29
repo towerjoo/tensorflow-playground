@@ -12,22 +12,31 @@ class SimpleModel:
 
         self.X = tf.placeholder("float", [None, 28, 28, 1])
         self.Y = tf.placeholder("float", [None, 10])
-        filter1 = self.init_weights([3, 3, 1, 32])
-        filter2 = self.init_weights([3, 3, 32, 64])
-        fc1 = self.init_weights([7*7*64, 635])
+        # conv. layers
+        conv1 = self.init_weights([3, 3, 1, 32])
+        conv2 = self.init_weights([3, 3, 32, 64])
+        conv3 = self.init_weights([3, 3, 64, 128])
+        # FC layers
+        fc1 = self.init_weights([4*4*128, 635])
         fc2 = self.init_weights([635, 10])
         self.p_keep_conv = tf.placeholder("float")
         self.p_keep_hidden = tf.placeholder("float")
-        self.train_model = self.get_model(self.X, filter1, filter2, fc1, fc2, self.p_keep_conv, self.p_keep_hidden)
+        self.train_model = self.get_model(self.X, conv1, conv2, conv3, fc1, fc2, self.p_keep_conv, self.p_keep_hidden)
 
-    def get_model(self, X, filter1, filter2, fc1, fc2, p_keep_conv, p_keep_hidden):
-        layer1a = tf.nn.relu(tf.nn.conv2d(X, filter1, strides=[1, 1, 1, 1], padding='SAME'))
-        layer1 = tf.nn.max_pool(layer1a, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1],
-                               padding='SAME')
-        layer1 = tf.nn.dropout(layer1, p_keep_conv)
+    def get_model(self, X, conv1, conv2, conv3, fc1, fc2, p_keep_conv, p_keep_hidden):
+        def apply_conv(input, conv):
+            conv1 = conv
+            layer1a = tf.nn.relu(tf.nn.conv2d(X, conv1, strides=[1, 1, 1, 1], padding='SAME'))
+            layer1 = tf.nn.max_pool(layer1a, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1],
+                                   padding='SAME')
+            layer1 = tf.nn.dropout(layer1, p_keep_conv)
+            return layer1
 
-        input = layer1
-        filter = filter2
+        out = apply_conv(X, conv1)
+        out = apply_conv(out, conv2)
+
+        input = out
+        filter = conv3
         # the last conv. layer
         layer_a = tf.nn.relu(tf.nn.conv2d(input, filter, strides=[1, 1, 1, 1], padding='SAME'))
         layer = tf.nn.max_pool(layer_a, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1],

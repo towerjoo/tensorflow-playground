@@ -12,15 +12,17 @@ class SimpleModel:
 
         self.X = tf.placeholder("float", [None, 28, 28, 1])
         self.Y = tf.placeholder("float", [None, 10])
-        filter1 = self.init_weights([3, 3, 1, 32])
+        # conv layers
+        conv1 = self.init_weights([3, 3, 1, 32])
+        # FC layers
         fc1 = self.init_weights([14*14*32, 635])
         fc2 = self.init_weights([635, 10])
         self.p_keep_conv = tf.placeholder("float")
         self.p_keep_hidden = tf.placeholder("float")
-        self.train_model = self.get_model(self.X, filter1, fc1, fc2, self.p_keep_conv, self.p_keep_hidden)
+        self.train_model = self.get_model(self.X, conv1, fc1, fc2, self.p_keep_conv, self.p_keep_hidden)
 
-    def get_model(self, X, filter1, fc1, fc2, p_keep_conv, p_keep_hidden):
-        layer1a = tf.nn.relu(tf.nn.conv2d(X, filter1, strides=[1, 1, 1, 1], padding='SAME'))
+    def get_model(self, X, conv1, fc1, fc2, p_keep_conv, p_keep_hidden):
+        layer1a = tf.nn.relu(tf.nn.conv2d(X, conv1, strides=[1, 1, 1, 1], padding='SAME'))
         layer1 = tf.nn.max_pool(layer1a, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1],
                                padding='SAME')
         layer1 = tf.nn.dropout(layer1, p_keep_conv)
