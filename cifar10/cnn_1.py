@@ -1,22 +1,30 @@
 import tensorflow as tf
 import numpy as np
-from tensorflow.examples.tutorials.mnist import input_data
+from tensorflow.contrib import keras
 
 class SimpleModel:
-    def __init__(self):
-        mnist = input_data.read_data_sets("MNIST_data/", one_hot=True)
-        self.x_train, self.y_train, self.x_test, self.y_test = \
-            mnist.train.images, mnist.train.labels, mnist.test.images, mnist.test.labels
-        import ipdb;ipdb.set_trace()
-        self.x_train = self.x_train.reshape(-1, 28, 28, 1)
-        self.x_test = self.x_test.reshape(-1, 28, 28, 1)
+    def one_hot(self, data, num=10):
+        rows = data.shape[0]
+        out = []
+        for i in range(rows):
+            index = data[i][0]
+            temp = np.zeros(num)
+            temp[index] = 1
+            out.append(temp)
+        return np.array(out)
 
-        self.X = tf.placeholder("float", [None, 28, 28, 1])
+    def __init__(self):
+        data = keras.datasets.cifar10.load_data()
+        (self.x_train, self.y_train), (self.x_test, self.y_test) = data
+        self.y_train = self.one_hot(self.y_train)
+        self.y_test = self.one_hot(self.y_test)
+
+        self.X = tf.placeholder("float", [None, 32, 32, 3])
         self.Y = tf.placeholder("float", [None, 10])
         # conv layers
-        conv1 = self.init_weights([3, 3, 1, 32])
+        conv1 = self.init_weights([3, 3, 3, 32])
         # FC layers
-        fc1 = self.init_weights([14*14*32, 635])
+        fc1 = self.init_weights([16*16*32, 635])
         fc2 = self.init_weights([635, 10])
         self.p_keep_conv = tf.placeholder("float")
         self.p_keep_hidden = tf.placeholder("float")
