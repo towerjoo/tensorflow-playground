@@ -5,3 +5,7 @@
 - CNN with 3 Conv. Layers: [code](mnist/cnn_3.py)
 - CNN with 4 Conv. Layers: [code](mnist/cnn_4.py)
 
+# CIFAR10
+
+- CNN with 1 Conv. Layer: [code](cifar10/cnn_1.py)
+- CNN with 4 Conv. Layers: [code](cifar10/cnn_4.py)
